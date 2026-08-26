@@ -1,0 +1,160 @@
+/* GeistSans loaded via next/font in app/layout.tsx, exposed as --font-geist-sans on <html>.
+   Unbounded is loaded manually below (not via next/font) so we can apply size-adjust —
+   its cap-height (750/1000) runs ~7% taller than Montserrat's (700/1000) at the same
+   font-size, which read as "too big" once it replaced Montserrat site-wide. */
+
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  size-adjust: 93.333%;
+  src: url(https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwtsZfvRIkSYZH.woff2) format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  size-adjust: 93.333%;
+  src: url(https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwv8ZfvRIkSYZH.woff2) format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  size-adjust: 93.333%;
+  src: url(https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwtcZfvRIkSYZH.woff2) format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Unbounded';
+  font-style: normal;
+  font-weight: 200 900;
+  font-display: swap;
+  size-adjust: 93.333%;
+  src: url(https://fonts.gstatic.com/s/unbounded/v12/Yq6W-LOTXCb04q32xlpwu8ZfvRIkSQ.woff2) format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Lumi AI light theme — Inweb rebrand, Aug 2026 */
+    --background: 0 0% 97%;           /* #F7F7F7 — світло-сірий фон */
+    --foreground: 0 0% 11%;           /* #1C1C1C — майже чорний */
+    --card: 0 0% 100%;               /* #FFFFFF */
+    --card-foreground: 0 0% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 11%;
+    --primary: 162 100% 12%;          /* #003B29 — темно-зелений Inweb */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 135 32% 91%;         /* #E1EFE4 — світло-зелений (hue зсунуто ближче до 120°,
+                                          а не до бренд-хью ~162°, бо на такій світлості/насиченості
+                                          хью 150-162° читається оком як блакитний, не зелений) */
+    --secondary-foreground: 162 45% 18%;
+    --muted: 0 0% 93%;
+    --muted-foreground: 0 0% 40%;     /* читабельний нейтральний сірий */
+    --accent: 9 85% 59%;              /* #EF583D — акцентний оранжевий */
+    --accent-foreground: 0 0% 100%;
+    --destructive: 0 72% 51%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 135 24% 85%;            /* #D0E2D4 — нейтральний зелено-сірий (той самий фікс хью) */
+    --input: 135 24% 85%;
+    --ring: 162 100% 12%;
+    --radius: 0.5rem;
+
+    /* Same brand hues as --primary/--accent, one step lighter/darker — used for hover
+       states and emphasis text that need to stay distinguishable from the base color,
+       not just a Tailwind-token-less literal hex (dark-mode support). */
+    --primary-hover: 161 100% 16%;    /* #00543A */
+    --accent-strong: 9 63% 48%;       /* #C8452E — darker orange, used for small emphasis text */
+
+    /* Lumi AI brand */
+    --inweb-green: #003B29;
+    --inweb-green-mid: #00543A;       /* лишається світлішим відтінком для hover — не темнішим, бо #003B29 вже майже чорний */
+    --inweb-orange: #EF583D;
+    --inweb-lime: #F0FC7E;
+    --inweb-charcoal: #1C1C1C;
+
+    --font-unbounded: 'Unbounded', sans-serif;
+  }
+
+  .dark {
+    /* Lumi AI dark theme — neutral black/gray surfaces (no brand-hue tint, per
+       explicit feedback: a green-tinted dark bg read as an odd washed-out green
+       rather than "dark", especially on desktop monitors). Only --primary/--accent
+       (and their -hover/-strong pairs) keep the brand hues (162° green, 9° orange) —
+       those are the actual interactive/accent colors, shifted lighter so they stay
+       visible against the dark background. */
+    --background: 0 0% 8%;             /* #141414 */
+    --foreground: 0 0% 93%;            /* #EDEDED */
+    --card: 0 0% 11%;                  /* #1C1C1C — one step up from background */
+    --card-foreground: 0 0% 93%;
+    --popover: 0 0% 11%;
+    --popover-foreground: 0 0% 93%;
+    --primary: 152 42% 46%;            /* #43A876 — brand green lightened for dark bg */
+    --primary-foreground: 0 0% 8%;
+    --secondary: 0 0% 16%;             /* #292929 — dark neutral surface */
+    --secondary-foreground: 0 0% 90%;
+    --muted: 0 0% 16%;
+    --muted-foreground: 0 0% 63%;
+    --accent: 9 85% 63%;               /* #FF7E5F — accent orange, lightened */
+    --accent-foreground: 0 0% 8%;
+    --destructive: 0 68% 58%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 0 0% 20%;                /* #333333 */
+    --input: 0 0% 20%;
+    --ring: 152 42% 46%;
+
+    --primary-hover: 150 45% 55%;      /* #59C08C */
+    --accent-strong: 12 100% 74%;      /* #FF9478 */
+
+    --inweb-green: #43A876;
+    --inweb-green-mid: #59C08C;
+    --inweb-orange: #FF7E5F;
+    --inweb-lime: #F0FC7E;
+    --inweb-charcoal: #EDEDED;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--font-geist-sans), sans-serif;
+    font-weight: 400;
+  }
+  h1, h2, h3, h4, h5 {
+    font-family: var(--font-unbounded), sans-serif;
+    font-weight: 700;
+  }
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { @apply bg-background; }
+  ::-webkit-scrollbar-thumb { background: #003B29; border-radius: 99px; }
+}
+
+@layer utilities {
+  .inweb-gradient {
+    background: linear-gradient(135deg, #003B29 0%, #00543A 50%, #EF583D 100%);
+  }
+  .inweb-lime-gradient {
+    background: linear-gradient(135deg, #EF583D 0%, #F0FC7E 100%);
+  }
+  .font-montserrat {
+    font-family: var(--font-unbounded), sans-serif;
+  }
+  .font-roboto {
+    font-family: var(--font-geist-sans), sans-serif;
+  }
+}
