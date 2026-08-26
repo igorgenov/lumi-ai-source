@@ -3,11 +3,18 @@ services:
     name: lumi-ai-backend
     runtime: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: |
+      cd backend
+      pip install --upgrade pip
+      pip install -r requirements.txt
+    startCommand: cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
+      - key: PIP_CACHE_DIR
+        value: /tmp/pip_cache
+      - key: CARGO_HOME
+        value: /tmp/cargo
       - key: SUPABASE_URL
         sync: false
       - key: SUPABASE_SERVICE_KEY
