@@ -3,7 +3,6 @@ services:
     name: lumi-ai-backend
     runtime: docker
     plan: free
-    dockerfilePath: Dockerfile
     envVars:
       - key: SUPABASE_URL
         sync: false
