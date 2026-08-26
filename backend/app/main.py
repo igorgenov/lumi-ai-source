@@ -7,8 +7,8 @@ app = FastAPI(
     title=settings.APP_NAME,
     description="API для аналітики зустрічей та комунікацій PM",
     version="0.1.0",
-    docs_url="/api/docs",
-    redoc_url="/api/redoc",
+    docs_url="/docs",
+    redoc_url="/redoc",
 )
 
 app.add_middleware(
@@ -30,6 +30,16 @@ app.include_router(chats.router, prefix="/api")
 app.include_router(audit.router, prefix="/api")
 
 
-@app.get("/api/health")
+@app.get("/")
+async def root():
+    return {"status": "ok", "app": settings.APP_NAME, "docs": "/docs"}
+
+
+@app.get("/health")
 async def health():
+    return {"status": "ok", "app": settings.APP_NAME}
+
+
+@app.get("/api/health")
+async def api_health():
     return {"status": "ok", "app": settings.APP_NAME}
