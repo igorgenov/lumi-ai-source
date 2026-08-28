@@ -10,7 +10,7 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "token and chatId are required" }, { status: 400 });
   }
 
-  const text = `✅ *Lumi AI*\n\nПідключення успішне! Цей чат буде отримувати звіти команди.\n\n_Тест відправлено: ${new Date().toLocaleString("uk-UA", { timeZone: "Europe/Kiev" })}_`;
+  const text = `✅ *HuyumiAI*\n\nПідключення успішне! Цей чат буде отримувати звіти команди.\n\n_Тест відправлено: ${new Date().toLocaleString("uk-UA", { timeZone: "Europe/Kiev" })}_`;
 
   const url = `https://api.telegram.org/bot${token}/sendMessage`;
   const tgRes = await fetch(url, {

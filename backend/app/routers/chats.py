@@ -35,7 +35,7 @@ STALE_WORKING_DAYS = 10
 # Never analyze correspondence older than this, no matter what `since` cutoff is passed
 # in (global backfill setting, or a manual /test override) — a client who went quiet
 # months ago and just came back shouldn't cost a full re-read of an old thread every
-# time their chat is (re)synced. Set to Lumi AI's own launch month (June 2026) — history
+# time their chat is (re)synced. Set to HuyumiAI's own launch month (June 2026) — history
 # from before the tool existed isn't relevant to analyze. Confirmed 2026-07-31 after a
 # manual add pulled 13 months of history (280K chars, $0.35) for a chat that had gone
 # stale and resumed.

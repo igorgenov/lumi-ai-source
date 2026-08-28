@@ -11,7 +11,7 @@ import { Providers } from "./providers";
 // since this Next.js version's next/font has no size-adjust/declarations API.
 
 export const metadata: Metadata = {
-  title: "Lumi AI — Аналітика розмов",
+  title: "HuyumiAI — Аналітика розмов",
   description: "Внутрішній інструмент Inweb для AI-аналізу розмов менеджерів з продажу",
 };
 

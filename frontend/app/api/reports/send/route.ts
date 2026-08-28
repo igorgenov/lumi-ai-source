@@ -255,7 +255,7 @@ async function buildReportText(content: ReportContent, periodLabel: string, freq
   const rangeLabel = `${fmtShort(fromDate)} – ${fmtShort(now)}`;
 
   const lines: string[] = [];
-  // No "Lumi AI —" prefix — the bot/chat itself is already clearly Lumi AI, and the
+  // No "HuyumiAI —" prefix — the bot/chat itself is already clearly HuyumiAI, and the
   // report's own emoji (📞/💬, set via its name in Settings) already distinguishes it.
   lines.push(`<b>${escapeHtml(periodLabel)}</b>`);
   lines.push(`<i>${rangeLabel}</i>`);

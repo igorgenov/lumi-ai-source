@@ -39,7 +39,7 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
   if (role !== "admin" && role !== "owner" && pathname === "/settings/changelog") {
     return (
       <div>
-        <Header title="Що нового" subtitle="Історія версій Lumi AI" />
+        <Header title="Що нового" subtitle="Історія версій HuyumiAI" />
         <div className="p-6">{children}</div>
       </div>
     );

@@ -62,9 +62,9 @@ export function Sidebar() {
             invert the orange accent to a mismatched blue. lumi-logo-dark.png is
             pre-recolored (green→white, orange kept as-is). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lumi-logo.png" alt="Lumi AI" className="dark:hidden" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
+        <img src="/lumi-logo.png" alt="HuyumiAI" className="dark:hidden" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lumi-logo-dark.png" alt="Lumi AI" className="hidden dark:block" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
+        <img src="/lumi-logo-dark.png" alt="HuyumiAI" className="hidden dark:block" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
       </Link>
 
       {/* Nav */}

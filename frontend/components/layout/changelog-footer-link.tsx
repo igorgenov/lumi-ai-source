@@ -22,7 +22,7 @@ export function ChangelogFooterLink() {
     <Link href="/settings/changelog"
       className="relative w-fit mx-auto inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/40 hover:text-primary transition-colors"
       style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
-      © 2026 Lumi AI · {LATEST_CHANGELOG_VERSION}
+      © 2026 HuyumiAI · {LATEST_CHANGELOG_VERSION}
       {unread && (
         <span className="w-1.5 h-1.5 rounded-full bg-accent" title="Є новини" />
       )}
