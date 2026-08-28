@@ -15,13 +15,11 @@ export const metadata: Metadata = {
   description: "Внутрішній інструмент Inweb для AI-аналізу розмов менеджерів з продажу",
   icons: {
     icon: [
-      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
-      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon.ico?v=2", rel: "icon", sizes: "any" },
+      { url: "/favicon-32x32.png?v=2", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png?v=2", sizes: "16x16", type: "image/png" },
     ],
-    apple: "/apple-icon.png",
-    other: [
-      { url: "/icon.png", type: "image/png" },
-    ],
+    apple: "/apple-icon.png?v=2",
   },
 };
 
@@ -43,6 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="uk" className={GeistSans.variable} suppressHydrationWarning>
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
+        <link rel="icon" href="/favicon.ico?v=2" sizes="any" />
+        <link rel="icon" href="/icon.png?v=2" type="image/png" />
+        <link rel="apple-touch-icon" href="/apple-icon.png?v=2" />
       </head>
       <body>
         <Providers>{children}</Providers>
