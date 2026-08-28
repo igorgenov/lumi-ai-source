@@ -1,0 +1,42 @@
+- generic [ref=e1]:
+  - generic [ref=e3]:
+    - generic [ref=e4]:
+      - generic [ref=e6]:
+        - generic [ref=e7]: Загрузка...
+        - progressbar [ref=e8]
+      - main [ref=e15]:
+        - generic [ref=e20]:
+          - heading "Вход" [level=1] [ref=e21]
+          - generic [ref=e22]: Для перехода к Google Cloud Platform войдите в свой аккаунт Google. Этот аккаунт будет доступен другим приложениям Google в браузере.
+        - generic [ref=e25]:
+          - generic [ref=e30]:
+            - generic [ref=e35]:
+              - textbox "Телефон или адрес эл. почты" [active] [ref=e36]
+              - generic: Телефон или адрес эл. почты
+            - button "Забыли адрес электронной почты?" [ref=e40] [cursor=pointer]
+          - generic [ref=e43]:
+            - text: Не ваш компьютер? Включите гостевой режим, чтобы защитить данные в аккаунте.
+            - link "Подробнее об использовании гостевого режима (внешняя ссылка, откроется в новом окне)" [ref=e44] [cursor=pointer]:
+              - /url: https://support.google.com/chrome/answer/6130773?hl=ru
+              - text: Подробнее об использовании гостевого режима
+        - generic [ref=e46]:
+          - button "Далее" [ref=e50]
+          - button "Создать аккаунт" [ref=e58]
+    - contentinfo [ref=e65]:
+      - combobox "Изменение языковых настроек Русский" [ref=e69] [cursor=pointer]:
+        - generic: Русский
+      - list [ref=e71]:
+        - listitem [ref=e72]:
+          - link "Открыть Справочный центр Google Аккаунтов (внешняя ссылка, откроется в новом окне)" [ref=e73] [cursor=pointer]:
+            - /url: https://support.google.com/accounts?hl=ru&p=account_iph
+            - text: Справка
+        - listitem [ref=e74]:
+          - link "Политика конфиденциальности (внешняя ссылка, откроется в новом окне)" [ref=e75] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=UA&hl=ru&privacy=true
+            - text: Конфиденциальность
+        - listitem [ref=e76]:
+          - link "Условия использования Google (внешняя ссылка, откроется в новом окне)" [ref=e77] [cursor=pointer]:
+            - /url: https://accounts.google.com/TOS?loc=UA&hl=ru
+            - text: Условия
+  - iframe [ref=e78]:
+    

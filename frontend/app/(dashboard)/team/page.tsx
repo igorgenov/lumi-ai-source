@@ -92,8 +92,8 @@ export default function ManagersPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dateRange, sortBy, search, attentionOnly]);
 
-  // Only show PMs (exclude owners, admins)
-  const managers = allManagers.filter(m => m.role === "pm" || m.role === "viewer");
+  // Show all team members
+  const managers = allManagers;
 
   if (status === "loading") return (
     <div>
@@ -186,23 +186,36 @@ export default function ManagersPage() {
             </div>
           </div>
 
-          <Link href={`/team/${generateSlug(bestManager.name)}`}
-            className="bg-card border border-primary/10 rounded-xl p-4 flex items-start justify-between gap-3 hover:shadow-sm hover:border-primary/20 transition-all group">
-            <div className="min-w-0">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1"
-                style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Лідер місяця</p>
-              <p className="text-sm font-black text-primary truncate" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>
-                {bestManager.name.split(" ")[0]} {bestManager.name.split(" ")[1]}
-              </p>
-              <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
-                {bestManager.stats.avgScore} балів
-                {bestManager.stats.weeklyTrendAvailable && ` · ${bestManager.stats.weeklyTrend >= 0 ? "+" : ""}${bestManager.stats.weeklyTrend}% тренд`}
-              </p>
+          {bestManager ? (
+            <Link href={`/team/${generateSlug(bestManager.name)}`}
+              className="bg-card border border-primary/10 rounded-xl p-4 flex items-start justify-between gap-3 hover:shadow-sm hover:border-primary/20 transition-all group">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1"
+                  style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Лідер місяця</p>
+                <p className="text-sm font-black text-primary truncate" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>
+                  {bestManager.name.split(" ")[0]} {bestManager.name.split(" ")[1]}
+                </p>
+                <p className="text-xs text-emerald-600 dark:text-emerald-400 font-semibold mt-1">
+                  {bestManager.stats.avgScore} балів
+                  {bestManager.stats.weeklyTrendAvailable && ` · ${bestManager.stats.weeklyTrend >= 0 ? "+" : ""}${bestManager.stats.weeklyTrend}% тренд`}
+                </p>
+              </div>
+              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                <TrendingUp className="w-4 h-4" />
+              </div>
+            </Link>
+          ) : (
+            <div className="bg-card border border-primary/10 rounded-xl p-4 flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mb-1"
+                  style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Лідер місяця</p>
+                <p className="text-sm text-muted-foreground">Немає даних</p>
+              </div>
+              <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
+                <TrendingUp className="w-4 h-4" />
+              </div>
             </div>
-            <div className="p-2 rounded-lg bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 shrink-0">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </Link>
+          )}
 
           <button
             onClick={() => needsAttention.length > 0 && setAttentionOnly(v => !v)}

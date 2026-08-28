@@ -19,7 +19,7 @@ export async function GET() {
 
     const [{ data: convs }, { data: mgrs }, { data: historyRows }] = await Promise.all([
       db.from("conversations").select(`
-        id, type, status, date, created_at, client_name, client_company, manager_id, duration_seconds, audio_url, service, conversation_kind,
+        id, type, status, date, created_at, client_name, client_company, manager_id, duration_seconds, service, conversation_kind,
         manager:managers(id, name, email, avatar_url),
         ai_analysis(score, summary, strengths, weaknesses, recommendations)
       `).order("date", { ascending: false }),
