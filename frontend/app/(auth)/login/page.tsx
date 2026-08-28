@@ -9,7 +9,7 @@ export default function LoginPage() {
       <div className="bg-white rounded-2xl shadow-lg p-10 flex flex-col items-center gap-6 w-full max-w-sm">
         <div className="flex flex-col items-center gap-2">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/lumi-icon.png" alt="HuyumiAI" style={{ width: 190, height: "auto" }} />
+          <img src="/huyumi-icon.png" alt="HuyumiAI" style={{ width: 190, height: "auto" }} />
 
           <p className="text-sm text-muted-foreground text-center">
             Увійдіть через корпоративний Google акаунт

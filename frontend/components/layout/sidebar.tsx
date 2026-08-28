@@ -59,12 +59,12 @@ export function Sidebar() {
       {/* Logo */}
       <Link href="/dashboard" className="flex items-center justify-center px-4 border-b border-border hover:bg-secondary/40 transition-colors h-[73px]">
         {/* Two separate assets, not a CSS filter (dark:invert) — a filter would also
-            invert the orange accent to a mismatched blue. lumi-logo-dark.png is
+            invert the orange accent to a mismatched blue. huyumi-logo-dark.png is
             pre-recolored (green→white, orange kept as-is). */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lumi-logo.png" alt="HuyumiAI" className="dark:hidden" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
+        <img src="/huyumi-logo.png" alt="HuyumiAI" className="dark:hidden" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src="/lumi-logo-dark.png" alt="HuyumiAI" className="hidden dark:block" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
+        <img src="/huyumi-logo-dark.png" alt="HuyumiAI" className="hidden dark:block" style={{ maxWidth: "150px", maxHeight: "46px", width: "auto", height: "auto" }} />
       </Link>
 
       {/* Nav */}
