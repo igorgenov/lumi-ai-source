@@ -13,6 +13,16 @@ import { Providers } from "./providers";
 export const metadata: Metadata = {
   title: "HuyumiAI — Аналітика розмов",
   description: "Внутрішній інструмент Inweb для AI-аналізу розмов менеджерів з продажу",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: "/apple-icon.png",
+    other: [
+      { url: "/icon.png", type: "image/png" },
+    ],
+  },
 };
 
 // Sets the `dark` class before hydration so the page never flashes light-then-dark
