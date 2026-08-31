@@ -2,7 +2,7 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "inweb.sales.ai"
+    APP_NAME: str = "huyumi-ai"
     DEBUG: bool = False
 
     # Supabase
@@ -15,7 +15,6 @@ class Settings(BaseSettings):
     ANTHROPIC_API_KEY: str = ""              # fallback / not-yet-split tasks
     ANTHROPIC_API_KEY_ANALYSIS: str = ""     # call/meeting transcript scoring (claude_analysis.py)
     ANTHROPIC_API_KEY_CHATS: str = ""        # Telegram chat scoring (chat_analysis.py)
-    ANTHROPIC_API_KEY_DEAL_REASONS: str = "" # loss/win-reason deal synthesis (loss_reason.py, win_reason.py)
 
     @property
     def anthropic_key_analysis(self) -> str:
@@ -24,10 +23,6 @@ class Settings(BaseSettings):
     @property
     def anthropic_key_chats(self) -> str:
         return self.ANTHROPIC_API_KEY_CHATS or self.ANTHROPIC_API_KEY
-
-    @property
-    def anthropic_key_deal_reasons(self) -> str:
-        return self.ANTHROPIC_API_KEY_DEAL_REASONS or self.ANTHROPIC_API_KEY
 
     # Meetings pipeline (Google Drive + AssemblyAI)
     GOOGLE_DRIVE_CLIENT_ID: str = ""
