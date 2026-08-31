@@ -21,9 +21,6 @@ class User(Base):
     avatar_url = Column(String)
     is_active = Column(Boolean, default=True)
 
-    # Ringostat integration
-    ringostat_employee_id = Column(String, unique=True)
-
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 

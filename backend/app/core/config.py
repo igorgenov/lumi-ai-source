@@ -9,10 +9,6 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_KEY: str = ""  # service_role key (not publishable)
 
-    # Ringostat
-    RINGOSTAT_API_KEY: str = ""
-    RINGOSTAT_WEBHOOK_SECRET: str = ""
-
     # AI — split per task (Aibis wants per-task cost visibility in his own dashboard,
     # 2026-08-13). Each task-scoped key falls back to ANTHROPIC_API_KEY when unset, so
     # nothing breaks before every key has actually been provisioned and set.

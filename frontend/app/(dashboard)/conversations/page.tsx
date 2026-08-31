@@ -220,7 +220,7 @@ function ManualEntryModal({ managers, onClose }: { managers: { id: string; name:
         </div>
         <div className="p-5 space-y-3">
           <p className="text-xs text-muted-foreground -mt-1">
-            Для розмови, яку Ringostat чи Google Meet не надіслали автоматично, або щоб перевірити промт на конкретному прикладі — встав готовий текст, посилання на VTT-транскрипцію Ringostat (дзвінок), запис Google Drive (зустріч) чи задачу Planfix (чат) нижче.
+            Для розмови, яку Google Meet не надіслав автоматично, або щоб перевірити промт на конкретному прикладі — встав готовий текст, посилання на VTT-транскрипцію (дзвінок), запис Google Drive (зустріч) чи задачу Planfix (чат) нижче.
           </p>
 
           <div className="flex items-center gap-1 bg-secondary/50 rounded-lg p-1 w-fit">
@@ -288,11 +288,11 @@ function ManualEntryModal({ managers, onClose }: { managers: { id: string; name:
           {type === "call" && (
             <div className="flex flex-col gap-1">
               <label className="text-xs font-semibold text-foreground" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>
-                Посилання на VTT-транскрипцію Ringostat (необов'язково)
+                Посилання на VTT-транскрипцію (необов'язково)
               </label>
               <div className="flex gap-2">
                 <input value={vttUrl} onChange={e => setVttUrl(e.target.value)}
-                  placeholder="https://app.ringostat.com/recordings/....vtt?token=..."
+                  placeholder="https://example.com/recording....vtt"
                   className="flex-1 px-3 py-2 text-xs border border-border rounded-lg bg-card" />
                 <button type="button" onClick={fetchVttTranscript} disabled={fetchingVtt || !vttUrl.trim()}
                   className="flex items-center gap-1.5 px-3 py-2 text-xs font-bold rounded-lg border border-primary/30 text-primary hover:bg-primary/5 disabled:opacity-40 transition-colors whitespace-nowrap"
@@ -302,7 +302,7 @@ function ManualEntryModal({ managers, onClose }: { managers: { id: string; name:
                 </button>
               </div>
               <p className="text-[11px] text-muted-foreground">
-                Посилання має вести на .vtt-файл (готова транскрипція Ringostat), не на аудіозапис. Текст заповнить поле нижче — перевір і за потреби відредагуй перед збереженням.
+                Посилання має вести на .vtt-файл, не на аудіозапис. Текст заповнить поле нижче — перевір і за потреби відредагуй перед збереженням.
               </p>
               {vttError && <p className="text-[11px] text-red-500">{vttError}</p>}
             </div>

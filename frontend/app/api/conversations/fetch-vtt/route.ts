@@ -3,11 +3,8 @@ import { requireRole } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic";
 
-// Ringostat's own AI already transcribes calls into a WebVTT file — when its webhook
-// to us fails, or for a call outside our system entirely, an admin can paste that VTT
-// link directly and we parse it the same way the automated webhook does (see
-// backend/app/services/ringostat.py::parse_webvtt, mirrored here since this only needs
-// a plain URL fetch + text parsing, no Google auth or other backend-only capability).
+// Parses a WebVTT file from a URL — used for manually pasted VTT links when adding
+// a conversation outside the automated pipelines.
 function formatVttTimestamp(raw: string): string {
   const parts = raw.trim().split(":");
   const [h, m, s] = parts.length === 3 ? parts : ["0", parts[0], parts[parts.length - 1]];

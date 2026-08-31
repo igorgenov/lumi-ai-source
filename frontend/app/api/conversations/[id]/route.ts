@@ -21,19 +21,19 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
     const WITH_EXPLANATIONS = `
         id, type, status, date, client_name, client_company, manager_id, contragent_id, duration_seconds, google_drive_file_id, planfix_task_id,
-        transcript, audio_url, vtt_url, service, conversation_kind, call_direction, call_status, ringostat_call_id, manager_talk_pct,
+        transcript, audio_url, vtt_url, service, conversation_kind, call_direction, call_status, manager_talk_pct,
         manager:managers(id, name, email),
         ai_analysis(score, summary, strengths, weaknesses, recommendations, criteria, criteria_explanations, manager_mood, client_mood, speaker_labels, insights, tagged_moments)
       `;
     const FULL = `
         id, type, status, date, client_name, client_company, manager_id, contragent_id, duration_seconds, google_drive_file_id, planfix_task_id,
-        transcript, audio_url, vtt_url, service, call_direction, call_status, ringostat_call_id,
+        transcript, audio_url, vtt_url, service, call_direction, call_status,
         manager:managers(id, name, email),
         ai_analysis(score, summary, strengths, weaknesses, recommendations, criteria, manager_mood, client_mood)
       `;
     const BASE = `
         id, type, status, date, client_name, client_company, manager_id, contragent_id, duration_seconds, google_drive_file_id, planfix_task_id,
-        transcript, audio_url, vtt_url, service, call_direction, call_status, ringostat_call_id,
+        transcript, audio_url, vtt_url, service, call_direction, call_status,
         manager:managers(id, name, email),
         ai_analysis(score, summary, strengths, weaknesses, recommendations)
       `;

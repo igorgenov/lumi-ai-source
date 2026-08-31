@@ -51,9 +51,8 @@ function parseWebVtt(vtt: string): string {
     const speakerId = match[1];
     const text = match[2].trim();
     if (!text) continue;
-    // Neutral letter labels, NOT a manager/client guess — see ringostat.py::parse_webvtt
-    // for why speaking order doesn't reliably indicate the role. Claude assigns the
-    // actual role from context afterwards.
+    // Neutral letter labels, NOT a manager/client guess — speaking order doesn't
+    // reliably indicate the role. Claude assigns the actual role from context afterwards.
     if (!speakerMap[speakerId]) {
       speakerMap[speakerId] = String.fromCharCode(65 + Object.keys(speakerMap).length);
     }

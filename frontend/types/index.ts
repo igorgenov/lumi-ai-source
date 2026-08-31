@@ -20,7 +20,6 @@ export interface CallMetadata {
   duration: number; // seconds
   direction: "inbound" | "outbound";
   result: CallResult;
-  ringostatCallId: string;
 }
 
 export interface MeetingMetadata {

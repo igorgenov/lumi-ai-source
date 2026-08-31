@@ -201,7 +201,6 @@ type MeetingSource = { folder_id: string; enabled: boolean; since_date: string; 
 
 export function IntegrationsTab() {
   const confirm = useConfirm();
-  const [keyVisible, setKeyVisible] = useState(false);
   const [sources, setSources] = useState<MeetingSource[]>([]);
   const [sourcesLoading, setSourcesLoading] = useState(true);
   const [savingFolder, setSavingFolder] = useState<string | null>(null);
@@ -272,23 +271,11 @@ export function IntegrationsTab() {
     setSources(prev => prev.filter(s => s.folder_id !== folder_id));
     setSavingFolder(null);
   }
-  const [copied, setCopied] = useState(false);
-  const [secretCopied, setSecretCopied] = useState(false);
   const [apiManagers, setApiManagers] = useState<{ id: string; name: string; email: string; role: string; avatar_url?: string | null }[]>([]);
   const [managersLoading, setManagersLoading] = useState(true);
   const [driveAccountEmail, setDriveAccountEmail] = useState<string | null>(null);
-  const [webhookSecret, setWebhookSecret] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch("/api/integrations/ringostat-secret")
-      .then(r => r.json())
-      .then(data => setWebhookSecret(data.secret ?? null))
-      .catch(() => {});
-  }, []);
-
-  const WEBHOOK = "https://inweb-sales-backend-871800563077.europe-west1.run.app/api/webhooks/ringostat";
-
-  function loadManagers() {
     setManagersLoading(true);
     fetch("/api/team")
       .then(r => r.json())
@@ -371,79 +358,8 @@ export function IntegrationsTab() {
     setChatSyncSaving(false);
   }
 
-  function copyWebhook() {
-    navigator.clipboard.writeText(WEBHOOK);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  }
-
   return (
     <div className="space-y-4">
-      <Section title="Ringostat" description="Отримання даних дзвінків через webhook">
-        <div className="flex items-center gap-3 mb-5">
-          <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground">
-            <Phone className="w-5 h-5" />
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-bold text-foreground" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Ringostat Webhooks</p>
-            <p className="text-xs text-muted-foreground">Автоматична передача метаданих дзвінків</p>
-          </div>
-          <span className="text-xs bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border border-green-200 dark:border-green-500/30 dark:border-green-500/20 font-bold px-2.5 py-1 rounded-full" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Підключено</span>
-        </div>
-
-        <div className="space-y-4">
-          <Field label="Webhook URL (вставте в Ringostat)">
-            <div className="flex gap-2">
-              <input readOnly value={WEBHOOK} className="flex-1 px-3 py-2 text-xs border border-border rounded-lg bg-muted text-muted-foreground" />
-              <button onClick={copyWebhook}
-                className={cn("px-3 py-2 border rounded-lg transition-colors bg-card",
-                  copied ? "border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400" : "border-border text-muted-foreground hover:text-primary hover:border-primary/30")}>
-                {copied ? <BrandCheck className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-          </Field>
-
-          <Field label="Секретний ключ (заголовок x-webhook-secret, вставте в Ringostat)">
-            <div className="flex gap-2">
-              <div className="relative flex-1">
-                <input readOnly value={webhookSecret ? (keyVisible ? webhookSecret : "••••••••••••••••••••••••") : "Завантаження…"}
-                  className="w-full px-3 py-2 pr-10 text-xs border border-border rounded-lg bg-muted text-muted-foreground" />
-                <button onClick={() => setKeyVisible(v => !v)} disabled={!webhookSecret} className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground disabled:opacity-40">
-                  {keyVisible ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
-                </button>
-              </div>
-              <button onClick={() => { if (!webhookSecret) return; navigator.clipboard.writeText(webhookSecret); setSecretCopied(true); setTimeout(() => setSecretCopied(false), 2000); }}
-                disabled={!webhookSecret}
-                className={cn("px-3 py-2 border rounded-lg transition-colors bg-card disabled:opacity-40",
-                  secretCopied ? "border-emerald-300 dark:border-emerald-500/30 text-emerald-600 dark:text-emerald-400" : "border-border text-muted-foreground hover:text-primary hover:border-primary/30")}>
-                {secretCopied ? <BrandCheck className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              </button>
-            </div>
-            <p className="text-[11px] text-muted-foreground mt-1">Реальне значення, яке бекенд перевіряє на кожному вхідному вебхуку — зміна тут нічого не ротує, лише читає поточний секрет із конфігурації сервера.</p>
-          </Field>
-
-          <div className="flex flex-col gap-1.5">
-            <label className="text-xs font-semibold text-foreground" style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>Команда, чиї дзвінки обробляються</label>
-            <p className="text-xs text-muted-foreground -mt-0.5">Зіставлення відбувається автоматично за email менеджера з полем Representative у вебхуку Ringostat.</p>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {managersLoading ? (
-                <div className="flex items-center gap-2 py-2">
-                  <div className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-                  <span className="text-xs text-muted-foreground">Завантаження…</span>
-                </div>
-              ) : apiManagers.filter(m => m.role === "pm").length === 0 ? (
-                <p className="text-xs text-muted-foreground italic">Немає менеджерів проєктів у системі</p>
-              ) : apiManagers.filter(m => m.role === "pm").map(m => (
-                <div key={m.id} className="flex items-center gap-2 pl-1.5 pr-3 py-1.5 border border-border rounded-full bg-muted">
-                  <ManagerAvatar name={m.name} avatarUrl={m.avatar_url} className="w-5 h-5 rounded-full text-[10px] shrink-0" />
-                  <span className="text-xs text-foreground font-medium">{m.name}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Section>
-
       <Section title="Google Drive / Google Meet" description="Автоматична транскрипція та AI-аналіз записів зустрічей менеджерів">
         <div className="flex items-center gap-3 mb-5">
           <div className="w-10 h-10 rounded-xl bg-secondary flex items-center justify-center text-muted-foreground">
@@ -1360,11 +1276,10 @@ const CHANGELOG: { version: string; date: string; items: string[] }[] = [
       "**Витрати на AI: фільтр «По днях»**, гортання історії будь-як далеко назад (раніше — лише останні тижні/місяці), звірка з реальним білінгом Anthropic/AssemblyAI",
       "**Google Drive: видно, який акаунт підключено** — потрібно надавати доступ саме йому",
       "**Виправлено: критичні API-роути дашборду та розмови** тепер мають власну перевірку сесії (не покладаються лише на middleware)",
-      "**Виправлено: «Секретний ключ» Ringostat** у Налаштуваннях показував випадковий рядок замість реального значення, яке перевіряє бекенд",
       "**Додано перші автотести** (підбір промту за менеджером, парсинг VTT-транскрипту) — саме ці місця спричиняли реальні баги цього тижня",
       "**Дашборд: перевпорядковано блоки за пріоритетом** — «Остання активність» тепер зверху (найсвіжіший сигнал), «Топ менеджери» поруч із «Тренд балів менеджерів» знизу",
       "**Розмови: фільтр «⚠ Проблемні»** — одразу видно розмови зі статусом «Помилка» або застряглі в «Очікує» довше години",
-      "**Розмови: кнопка «Додати вручну»** — можна вставити готовий текст розмови (наприклад, якщо Ringostat не надіслав вебхук) і одразу запустити AI-аналіз, без запису дзвінка чи зустрічі",
+      "**Розмови: кнопка «Додати вручну»** — можна вставити готовий текст розмови і одразу запустити AI-аналіз, без запису дзвінка чи зустрічі",
       "**Розмова: кнопка «Додати в коучинг»** переносить рекомендації з розбору дзвінка напряму в план розвитку менеджера",
       "**Менеджер: кнопка «Порівняти з іншим менеджером»** одразу зі сторінки профілю",
       "**Промти: історія версій** з можливістю відновити попередній варіант одним кліком",
@@ -1379,7 +1294,6 @@ const CHANGELOG: { version: string; date: string; items: string[] }[] = [
     items: [
       "**Масовий AI-аналіз перейшов на Claude Sonnet 5** — точніша оцінка критеріїв і надійніше визначення ролей спікерів",
       "**Інсайти: ліміт контексту зріс з 200 тис. до 1 млн токенів** — можна аналізувати значно більше розмов за один запит",
-      "**Дзвінки: кнопка «Відкрити дзвінок у Ringostat»** в картці дзвінка (аналогічно Google Drive для зустрічей)",
       "**Транскрипти тепер показують таймінг** [ХВ:СЕК] для кожної репліки",
       "**Виправлено визначення ролей спікерів у дзвінках** — менеджер/клієнт тепер визначаються AI за змістом розмови, а не за тим, хто заговорив першим (раніше плутались на вихідних дзвінках)",
       "**Кнопка «Повторний аналіз» тепер доступна для будь-якої розмови** (раніше лише при помилці аналізу) і більше не перезаписує вже встановлену вручну послугу",
@@ -1423,7 +1337,6 @@ const CHANGELOG: { version: string; date: string; items: string[] }[] = [
     date: "30.06.2026",
     items: [
       "**Перший реліз** — платформа для автоматичного AI-аналізу дзвінків менеджерів з продажу",
-      "**Інтеграція з Ringostat** — кожен дзвінок автоматично транскрибується та оцінюється AI за критеріями під тип дзвінка (виявлення потреб, BANT, презентація, робота з запереченнями, закриття)",
       "**Автовизначення послуги Inweb**, згаданої в дзвінку, з можливістю ручної корекції",
       "**Конкретні AI-рекомендації менеджеру після кожного дзвінка** + аудіозапис у картці розмови",
       "**Кнопка повторного аналізу** для проблемних записів",

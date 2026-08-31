@@ -214,15 +214,6 @@ async def get_deal_sm_reason(task_id: int) -> tuple[str | None, str | None]:
 CONTRAGENT_DEALS_FIELD_ID = 721
 
 
-# Ringostat's own Planfix integration auto-creates a nameless contact in this group
-# for every call, separate from whatever contact the same person gets later via a
-# real lead form — confirmed live 2026-08-03 (contact 31936 "Без імені" vs 31937
-# "Станіслав", same phone, groups "Вхідний дзвінок" (id 21) vs "Потенційний клієнт"
-# (id 13)). `group` is a built-in contact field, not a custom one — read it with the
-# literal field name, no numeric ID needed.
-RINGOSTAT_STUB_GROUP_NAME = "Вхідний дзвінок"
-
-
 async def get_contact_deal_task_ids_and_group(contact_id: int) -> tuple[list[int], str | None]:
     async with httpx.AsyncClient(timeout=30) as client:
         resp = await client.get(

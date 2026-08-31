@@ -775,14 +775,6 @@ export default function ConversationDetailPage() {
                 <div className="mt-4 pt-4 border-t border-border">
                   <p className="text-xs text-muted-foreground mb-2">Запис дзвінка</p>
                   <AudioPlayer src={conv.audio_url} />
-                  {(conv as any).ringostat_call_id && (
-                    <a href={`https://reports.ringostat.com/call_log/40/client-card?startDate=1780358400&endDate=1782950400&limit=25&offset=0&rows=0&viewId=2007300&filterId=3103695&uniqueId=${encodeURIComponent((conv as any).ringostat_call_id)}&linkedId=${encodeURIComponent((conv as any).ringostat_call_id)}&clientId=`}
-                      target="_blank" rel="noopener noreferrer"
-                      className="inline-flex items-center gap-2 mt-3 px-3 py-2 text-xs font-semibold rounded-lg border border-primary/30 text-primary hover:bg-primary/5 transition-colors"
-                      style={{ fontFamily: "var(--font-unbounded), sans-serif" }}>
-                      <ExternalLink className="w-3.5 h-3.5" /> Відкрити дзвінок у Ringostat
-                    </a>
-                  )}
                 </div>
               )}
 

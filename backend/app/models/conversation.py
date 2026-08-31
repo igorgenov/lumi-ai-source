@@ -44,7 +44,6 @@ class Conversation(Base):
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
 
     # Call-specific
-    ringostat_call_id = Column(String, unique=True)
     call_duration = Column(Integer)  # seconds
     call_direction = Column(String)  # inbound / outbound
     call_result = Column(Enum(CallResult))

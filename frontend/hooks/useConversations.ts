@@ -11,7 +11,6 @@ export type ConversationRow = {
   created_at: string | null;
   client_name: string | null;
   client_company: string | null;
-  ringostat_call_id: string | null;
   audio_url: string | null;
   transcript: string | null;
   service: string | null;

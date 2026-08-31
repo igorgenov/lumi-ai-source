@@ -57,9 +57,9 @@ async function findOrCreateContragent(db: ReturnType<typeof adminSupabase>, clie
   }
 }
 
-// Manually adds a conversation for AI analysis outside the Ringostat/Google Drive
-// pipelines — for a call Ringostat never sent a webhook for, or to test a prompt
-// change against a known transcript. No audio/video recording, just a transcript.
+// Manually adds a conversation for AI analysis outside the automated pipelines —
+// to test a prompt change against a known transcript. No audio/video recording,
+// just a transcript.
 export async function POST(req: NextRequest) {
   const session = await requireRole(["owner", "admin"]);
   if (!session) return NextResponse.json({ error: "Forbidden" }, { status: 403 });

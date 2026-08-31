@@ -1,8 +1,7 @@
 """
 Meetings pipeline — polls each sales manager's Google Drive folder for new
 Meet recordings, transcribes them (AssemblyAI, speaker diarization), analyzes
-with Claude, and saves them as conversations (type="meeting"), mirroring the
-existing Ringostat call pipeline in webhooks.py.
+with Claude, and saves them as conversations (type="meeting").
 
 Triggered periodically by Cloud Scheduler hitting POST /api/meetings/poll.
 """
