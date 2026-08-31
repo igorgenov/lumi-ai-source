@@ -284,9 +284,7 @@ export function IntegrationsTab() {
       })
       .catch(() => {})
       .finally(() => setManagersLoading(false));
-  }
-
-  useEffect(() => { loadManagers(); }, []);
+  }, []);
 
   useEffect(() => {
     fetch("/api/google-drive/account")
