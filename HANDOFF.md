@@ -13,15 +13,16 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
 ```
 
 **GitHub**: `https://github.com/igorgenov/lumi-ai-source` (public)
-**Supabase**: `https://yxodvhgyutatzqshiiua.supabase.co`
+**Supabase**: `https://innnhytlkbmhnaqrijtd.supabase.co` (Організація: `Gesha`, Project: `gesha's Project`, Регіон: `eu-west-1`)
 **Backend (Render)**: `https://lumi-ai-backend-0cyt.onrender.com`
 
 ---
 
-## Поточний стан (оновлено 2026-08-31)
+## Поточний стан (оновлено 2026-09-08)
 
 ### Що працює
 - Frontend на Vercel
+- Supabase: проект перенесено в організацію «Gesha» (Project ID: `innnhytlkbmhnaqrijtd`, Регіон: `eu-west-1`). Локальні `.env` (backend) та `.env.local` (frontend) налаштовані на новий проект. Старий проект `yxodvhgyutatzqshiiua` в `igorgenov's Org` закріплений за дашбордом Відлік / TimesFM і не стосується HuyumiAI.
 - Supabase база даних з 25 таблицями (повна схема в `supabase-full-schema.sql`)
 - Google OAuth (@inweb.ua тільки)
 - Бекенд: Google Drive polling, AssemblyAI транскрипція, Claude аналіз зустрічей
