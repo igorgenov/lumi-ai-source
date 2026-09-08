@@ -33,7 +33,7 @@ export async function GET() {
       "Content-Type": "application/json",
       ...(process.env.MEETINGS_POLL_SECRET ? { "x-webhook-secret": process.env.MEETINGS_POLL_SECRET } : {}),
     },
-    body: JSON.stringify({ manager_id: manager.id }),
+    body: JSON.stringify({ manager_id: manager.id, return_path: "/connect-drive" }),
   });
   const data = await res.json().catch(() => null);
   if (!res.ok || !data?.url) {

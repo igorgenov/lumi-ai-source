@@ -7,7 +7,7 @@ import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { useEffectiveRole, useViewAs, AppRole } from "@/components/providers/view-as-provider";
 import {
-  LayoutDashboard, MessageSquare, Users, Lightbulb,
+  LayoutDashboard, MessageSquare, Users, Lightbulb, HardDrive,
   FileText, Sparkles, Settings, LogOut, Eye, ChevronDown, X, FolderKanban,
 } from "lucide-react";
 
@@ -26,6 +26,7 @@ const NAV_GROUPS = [
   [
     { href: "/coaching",       label: "AI Коучинг", icon: Lightbulb,        roles: ["owner", "admin", "pm"] },
     { href: "/insights",       label: "Інсайти",    icon: Sparkles,         roles: ["owner", "admin", "pm", "viewer"] },
+    { href: "/connect-drive",  label: "Google Диск", icon: HardDrive,       roles: ["owner", "admin", "pm", "viewer"] },
   ],
   [
     { href: "/prompts",        label: "Промти",     icon: FileText,         roles: ["owner", "admin", "pm"] },

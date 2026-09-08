@@ -16,6 +16,10 @@ services:
         sync: false
       - key: GOOGLE_DRIVE_REFRESH_TOKEN
         sync: false
+      - key: GOOGLE_DRIVE_WEB_CLIENT_ID
+        sync: false
+      - key: GOOGLE_DRIVE_WEB_CLIENT_SECRET
+        sync: false
       - key: ASSEMBLYAI_API_KEY
         sync: false
       - key: MEETINGS_POLL_SECRET

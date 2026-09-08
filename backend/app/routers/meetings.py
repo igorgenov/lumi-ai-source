@@ -73,6 +73,7 @@ async def stream_recording(conversation_id: str, range_header: Optional[str] = H
 
 class DriveOAuthStartBody(BaseModel):
     manager_id: str
+    return_path: str = "/settings/integrations"
 
 
 @router.post("/drive-oauth/start")
@@ -85,7 +86,7 @@ async def drive_oauth_start(payload: DriveOAuthStartBody, x_webhook_secret: Opti
             raise HTTPException(status_code=403, detail="Invalid webhook secret")
     if not settings.GOOGLE_DRIVE_WEB_CLIENT_ID or not settings.GOOGLE_DRIVE_WEB_CLIENT_SECRET:
         raise HTTPException(status_code=503, detail="Google OAuth web client не налаштований")
-    return {"url": google_drive_oauth.build_authorize_url(payload.manager_id)}
+    return {"url": google_drive_oauth.build_authorize_url(payload.manager_id, payload.return_path)}
 
 
 @router.get("/drive-oauth/callback")
@@ -97,9 +98,11 @@ async def drive_oauth_callback(code: str = "", state: str = "", error: str = "")
     if error:
         return RedirectResponse(f"{frontend_settings_url}?drive_oauth_error={error}")
 
-    manager_id = google_drive_oauth.verify_state(state)
-    if not manager_id:
+    verified_state = google_drive_oauth.verify_state(state)
+    if not verified_state:
         return RedirectResponse(f"{frontend_settings_url}?drive_oauth_error=invalid_state")
+    manager_id, return_path = verified_state
+    frontend_return_url = f"{settings.FRONTEND_BASE_URL}{return_path}"
 
     try:
         tokens = await google_drive_oauth.exchange_code(code)
@@ -108,11 +111,11 @@ async def drive_oauth_callback(code: str = "", state: str = "", error: str = "")
             # Google only issues a refresh_token on first-ever consent for this
             # client+account pair — if the manager somehow reaches here without one
             # (shouldn't happen given prompt=consent), there's nothing useful to store.
-            return RedirectResponse(f"{frontend_settings_url}?drive_oauth_error=no_refresh_token")
+            return RedirectResponse(f"{frontend_return_url}?drive_oauth_error=no_refresh_token")
         email = await google_drive_oauth.get_email(tokens.get("access_token", ""))
     except Exception as e:
         print(f"[meetings] drive-oauth callback failed for manager {manager_id}: {e}")
-        return RedirectResponse(f"{frontend_settings_url}?drive_oauth_error=exchange_failed")
+        return RedirectResponse(f"{frontend_return_url}?drive_oauth_error=exchange_failed")
 
     db = get_supabase()
     db.table("manager_drive_tokens").upsert({
@@ -122,7 +125,7 @@ async def drive_oauth_callback(code: str = "", state: str = "", error: str = "")
         "updated_at": datetime.now(timezone.utc).isoformat(),
     }, on_conflict="manager_id").execute()
 
-    return RedirectResponse(f"{frontend_settings_url}?drive_connected=1")
+    return RedirectResponse(f"{frontend_return_url}?drive_connected=1")
 
 
 @router.get("/drive-oauth/status")

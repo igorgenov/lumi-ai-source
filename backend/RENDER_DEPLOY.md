@@ -40,7 +40,7 @@ GOOGLE_DRIVE_REFRESH_TOKEN=your_refresh_token
 ASSEMBLYAI_API_KEY=your_assemblyai_key
 MEETINGS_POLL_SECRET=any_random_string
 BACKEND_BASE_URL=https://lumi-ai-backend.onrender.com
-FRONTEND_BASE_URL=https://frontend-jl5q4l732-igenov-4615s-projects.vercel.app
+FRONTEND_BASE_URL=https://frontend-5dx8augyq-igenov-4615s-projects.vercel.app
 ```
 
 ## Step 5: Deploy

@@ -44,6 +44,8 @@ railway up
 | `GOOGLE_DRIVE_CLIENT_ID` | Google OAuth client ID |
 | `GOOGLE_DRIVE_CLIENT_SECRET` | Google OAuth client secret |
 | `GOOGLE_DRIVE_REFRESH_TOKEN` | Google refresh token |
+| `GOOGLE_DRIVE_WEB_CLIENT_ID` | Google OAuth Web application client ID for PM self-service |
+| `GOOGLE_DRIVE_WEB_CLIENT_SECRET` | Secret for the Google OAuth Web application client |
 | `ASSEMBLYAI_API_KEY` | AssemblyAI API key |
 | `MEETINGS_POLL_SECRET` | Any random string |
 | `BACKEND_BASE_URL` | Your Railway backend URL |

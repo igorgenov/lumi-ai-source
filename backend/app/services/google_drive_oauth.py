@@ -33,33 +33,37 @@ def _state_secret() -> str:
     return settings.MEETINGS_POLL_SECRET or settings.GOOGLE_DRIVE_WEB_CLIENT_SECRET
 
 
-def sign_state(manager_id: str) -> str:
+def sign_state(manager_id: str, return_path: str = "/settings/integrations") -> str:
     """manager_id + expiry, HMAC-signed — the callback endpoint is hit directly by the
     browser via Google's redirect (no auth header possible), so this signature is the
     only thing stopping someone from forging a callback that overwrites a DIFFERENT
     manager's stored token (standard OAuth CSRF-state pattern)."""
     expires = int(time.time()) + STATE_TTL_SECONDS
-    payload = f"{manager_id}:{expires}"
+    if return_path not in ("/connect-drive", "/settings/integrations"):
+        return_path = "/settings/integrations"
+    payload = f"{manager_id}:{expires}:{return_path}"
     sig = hmac.new(_state_secret().encode(), payload.encode(), hashlib.sha256).hexdigest()
     return f"{payload}:{sig}"
 
 
-def verify_state(state: str) -> str | None:
-    """Returns manager_id if the state is validly signed and not expired, else None."""
+def verify_state(state: str) -> tuple[str, str] | None:
+    """Returns manager_id and return path if state is valid and not expired."""
     try:
-        manager_id, expires_s, sig = state.rsplit(":", 2)
+        manager_id, expires_s, return_path, sig = state.split(":", 3)
         expires = int(expires_s)
     except (ValueError, AttributeError):
         return None
     if time.time() > expires:
         return None
-    expected = hmac.new(_state_secret().encode(), f"{manager_id}:{expires}".encode(), hashlib.sha256).hexdigest()
+    if return_path not in ("/connect-drive", "/settings/integrations"):
+        return None
+    expected = hmac.new(_state_secret().encode(), f"{manager_id}:{expires}:{return_path}".encode(), hashlib.sha256).hexdigest()
     if not hmac.compare_digest(expected, sig):
         return None
-    return manager_id
+    return manager_id, return_path
 
 
-def build_authorize_url(manager_id: str) -> str:
+def build_authorize_url(manager_id: str, return_path: str = "/settings/integrations") -> str:
     params = {
         "client_id": settings.GOOGLE_DRIVE_WEB_CLIENT_ID,
         "redirect_uri": REDIRECT_URI,
@@ -70,7 +74,7 @@ def build_authorize_url(manager_id: str) -> str:
         # this, re-authorizing an account that already granted access once comes back
         # with no refresh_token at all (Google only issues it on the FIRST consent).
         "prompt": "consent",
-        "state": sign_state(manager_id),
+        "state": sign_state(manager_id, return_path),
     }
     return f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
 

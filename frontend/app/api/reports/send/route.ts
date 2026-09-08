@@ -40,7 +40,7 @@ type Conv = {
   manager: { name: string; role: string }[] | null;
 };
 
-const DASHBOARD_URL = "https://lumi.inweb.ua";
+const DASHBOARD_URL = "https://frontend-5dx8augyq-igenov-4615s-projects.vercel.app";
 
 function summarize(all: Conv[], convType: string = "all") {
   const analyzed = all.filter(c => c.status === "analyzed");
