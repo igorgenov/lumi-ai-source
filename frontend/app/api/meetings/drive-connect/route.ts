@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { requireRole } from "@/lib/api-auth";
 
-const BACKEND_URL = "https://inweb-sales-backend-871800563077.europe-west1.run.app";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 // Redirects the browser straight into Google's OAuth consent screen for one manager's
 // Drive — the backend builds the signed state + authorize URL (google_drive_oauth.py),

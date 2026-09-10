@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic";
 
-const BACKEND_URL = "https://inweb-sales-backend-871800563077.europe-west1.run.app";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 // Lets an admin paste a Google Drive share link for a meeting recording the automated
 // Meetings poller never picked up, and run it through the same download → transcribe

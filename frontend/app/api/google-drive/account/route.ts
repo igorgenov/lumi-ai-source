@@ -3,7 +3,7 @@ import { requireRole } from "@/lib/api-auth";
 
 export const dynamic = "force-dynamic";
 
-const BACKEND_URL = "https://inweb-sales-backend-871800563077.europe-west1.run.app";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 export async function GET() {
   const session = await requireRole(["owner", "admin"]);

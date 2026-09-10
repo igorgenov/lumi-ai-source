@@ -1,7 +1,7 @@
 import type { NextAuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 
-export type Role = "owner" | "admin" | "pm" | "viewer";
+export type Role = "owner" | "admin" | "pm" | "viewer" | "manager";
 
 async function getUserRole(email: string): Promise<Role> {
   try {

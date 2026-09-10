@@ -270,7 +270,7 @@ export function countsTowardAiScore(conv: { service?: string | null; conversatio
     if (!conv.date) return true;
     return new Date(conv.date) < CONVERSATION_KIND_LAUNCH_DATE;
   }
-  return SCORED_KINDS.includes(conv.conversation_kind);
+  return SCORED_KINDS.includes(conv.conversation_kind as any);
 }
 
 const TRANSLIT: Record<string, string> = {

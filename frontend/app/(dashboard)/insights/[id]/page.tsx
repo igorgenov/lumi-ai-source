@@ -19,7 +19,7 @@ import {
   BlockRenderer, TableCard, ComputedStatsCard, FilterChip, QueryBlock, HBarChart,
   FindingText, splitListItems, stripLeadingNumber, extractNameTokens, toChartObjections,
   exportInsightPDF, ComputedStats, TableData, DeltaBadge, findingTone, FINDING_TONE_CARD_CLASS,
-} from "../page";
+} from "../shared";
 
 // A single saved insight, viewed on its own page instead of expanding inline in the
 // history list — a full AI report (multiple blocks, tables, quotes) needs real room to

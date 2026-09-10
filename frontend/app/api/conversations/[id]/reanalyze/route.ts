@@ -5,7 +5,7 @@ import { runAnalysisAndSave } from "@/lib/claude-analysis";
 
 export const dynamic = "force-dynamic";
 
-const BACKEND_URL = "https://inweb-sales-backend-871800563077.europe-west1.run.app";
+const BACKEND_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
 
 function adminSupabase() {
   const url = process.env.SUPABASE_URL ?? process.env.NEXT_PUBLIC_SUPABASE_URL!;

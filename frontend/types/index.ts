@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "manager";
+export type UserRole = "owner" | "admin" | "pm" | "viewer" | "manager";
 
 export interface User {
   id: string;
@@ -11,8 +11,8 @@ export interface User {
   createdAt: string;
 }
 
-export type ConversationType = "call" | "meeting";
-export type ConversationStatus = "analyzed" | "pending" | "failed";
+export type ConversationType = "call" | "meeting" | "chat";
+export type ConversationStatus = "analyzed" | "pending" | "failed" | "no_transcript" | "analyzing";
 export type CallResult = "success" | "rejected" | "no_answer" | "callback" | "transferred";
 
 export interface CallMetadata {
