@@ -30,7 +30,7 @@ class Settings(BaseSettings):
     GOOGLE_DRIVE_REFRESH_TOKEN: str = ""
     ASSEMBLYAI_API_KEY: str = ""
     MEETINGS_POLL_SECRET: str = ""
-    BACKEND_BASE_URL: str = "https://inweb-sales-backend-871800563077.europe-west1.run.app"
+    BACKEND_BASE_URL: str = "https://lumi-ai-backend-0cyt.onrender.com"
     FRONTEND_BASE_URL: str = "https://frontend-5dx8augyq-igenov-4615s-projects.vercel.app"
 
     # Per-manager Google Drive OAuth (2026-08-13) — lets each manager self-authorize
