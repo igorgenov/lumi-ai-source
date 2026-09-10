@@ -18,7 +18,7 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
 
 ---
 
-## Поточний стан (оновлено 2026-09-08)
+## Поточний стан (оновлено 2026-09-10)
 
 ### Що працює
 - Frontend на Vercel
@@ -29,6 +29,10 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
 - Бекенд: Planfix Telegram chat sync + аналіз
 - Бекенд: Recovery (авто-перезапуск stuck розмов)
 - Бекенд: Audit (авто-фікс score integrity)
+- Всі 10 захардкоджені Cloud Run URL у роутах фронтенду замінено на `process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"`
+- TypeScript типи повністю синхронізовано (`UserRole`, `ConversationType`, `ConversationStatus`, NextAuth `Role`)
+- Виправлено App Router експорти в `insights/page.tsx` (винесено спільні компоненти в `insights/shared.tsx`)
+- Суворий білд (`next build`) увімкнено (`ignoreBuildErrors` та `ignoreDuringBuilds` прибрано), збірка проходить успішно з кодом 0
 - Мертвий SQLAlchemy код видалено
 - Мертві stub роутери (managers.py, conversations.py) видалено
 - SM-specific SQL міграції (contragents, deals, loss/win reasons) видалено
@@ -41,25 +45,10 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
    - Таблицю `notifications` викликає meetings.py (рядки 504-510), але вона НЕ існує в схемі — буде помилка при кожному аналізі зустрічі (ковтається broad except)
    - Таблицю `telegram_chats` є в міграціях, але немає в full schema
 
-2. **Захардкоджені URL в frontend:**
-   - `frontend/app/api/meetings/drive-connect/route.ts` → `https://inweb-sales-backend-871800563077.europe-west1.run.app`
-   - `frontend/app/api/meetings/drive-status/route.ts` → те саме
-   - Мало бути `NEXT_PUBLIC_API_URL`
-
-3. **TypeScript та ESLint вимкнено:**
-   - `next.config.js`: `ignoreBuildErrors: true`, `ignoreDuringBuilds: true`
-   - Типи не збігаються з реальною схемою (див. п.5)
-
-4. **Типи фронтенду не збігаються зі схемою:**
-   - `UserRole = "admin" | "manager"` — реальні: `owner | admin | pm | viewer`
-   - `ConversationType` немає `"chat"`
-   - `ConversationStatus` немає `"no_transcript"`, `"analyzing"`
-   - `Service` захардкоджений
-
-5. **render.yaml неповний:**
+2. **render.yaml неповний:**
    - Немає: `ANTHROPIC_API_KEY_ANALYSIS`, `ANTHROPIC_API_KEY_CHATS`, `GOOGLE_DRIVE_WEB_CLIENT_ID`, `GOOGLE_DRIVE_WEB_CLIENT_SECRET`, `PLANFIX_API_TOKEN`
 
-6. **README/DEPLOY.md суперечливі:**
+3. **README/DEPLOY.md суперечливі:**
    - README каже "Vercel + Railway"
    - DEPLOY.md каже Railway
    - `render.yaml` та `deploy-render.sh` для Render
@@ -72,7 +61,7 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
 
 ### 🔴 Критичні (без цього не працює)
 
-1. **Додати redirect URI в Google Cloud Console** для кожного нового Vercel deploy URL (формат: `https://frontend-XXXXX-igenov-4615s-projects.vercel.app/api/auth/callback/google`)
+1. **Додати redirect URI в Google Cloud Console** для кожного нового Vercel deploy URL (формат: `https://frontend-XXXXX-igenov-4615s-projects.vercel.app/api/auth/callback/google` та кастомного домену)
 
 2. **Вимкнути Vercel Deployment Protection** для production або налаштувати bypass token
 
@@ -87,17 +76,9 @@ Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
 
 ### 🟡 Важливі (робоче, але з багами)
 
-4. **Замінити захардкоджені URL:**
-   - `frontend/app/api/meetings/drive-connect/route.ts` → `process.env.NEXT_PUBLIC_API_URL`
-   - `frontend/app/api/meetings/drive-status/route.ts` → те саме
-
-5. **Оновити TypeScript типи** в `frontend/types/index.ts`:
-   - `UserRole = "owner" | "admin" | "pm" | "viewer"`
-   - Додати `"chat"` до `ConversationType`
-   - Додати `"no_transcript"`, `"analyzing"` до `ConversationStatus`
-
-6. **Увімкнути TypeScript/ESLint в builds:**
-   - В `next.config.js` прибрати `ignoreBuildErrors: true` та `ignoreDuringBuilds: true`
+4. ~~**Замінити захардкоджені URL:**~~ ✅ Виконано (замінено 10 входжень на `NEXT_PUBLIC_API_URL`)
+5. ~~**Оновити TypeScript типи:**~~ ✅ Виконано (`UserRole`, `ConversationType`, `ConversationStatus`, `Role`)
+6. ~~**Увімкнути TypeScript/ESLint в builds:**~~ ✅ Виконано (прибрано `ignoreBuildErrors`, виправлено App Router експорти через `insights/shared.tsx`, білд успішний)
 
 7. **Оновити `.env.example`** — додати всі змінні з config.py яких там немає
 
