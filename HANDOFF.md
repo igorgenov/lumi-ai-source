@@ -1,368 +1,162 @@
-# HuyumiAI — Документ передачі розробки
+# HuyumiAI (Lumi AI) — Документ передачі проєкту розробнику
 
-## Архітектура
-
-```
-Vercel (Frontend)  →  Supabase (DB + Auth)  ←  Render (Backend)
-    │                                            │
-    └── Next.js 14 + NextAuth                     ├── FastAPI
-    └── ~35 API routes                            ├── Claude API (AI analysis)
-    └── 15 dashboard pages                        ├── AssemblyAI (transcription)
-                                                  ├── Google Drive API
-                                                  └── Planfix API
-```
-
-**GitHub**: `https://github.com/igorgenov/lumi-ai-source` (public)
-**Supabase**: `https://innnhytlkbmhnaqrijtd.supabase.co` (Організація: `Gesha`, Project: `gesha's Project`, Регіон: `eu-west-1`)
-**Backend (Render)**: `https://lumi-ai-backend-0cyt.onrender.com`
+**Відповідальний за подальшу розробку:** `s.doksov@inweb.ua` (роль у системі: `admin`)  
+**Дата оновлення:** 10 вересня 2026  
+**GitHub репозиторій:** [https://github.com/igorgenov/lumi-ai-source](https://github.com/igorgenov/lumi-ai-source) (гілка `main`)
 
 ---
 
-## Поточний стан (оновлено 2026-09-10)
+## 1. Архітектура системи
 
-### Що працює
-- Frontend на Vercel
-- Supabase: проект перенесено в організацію «Gesha» (Project ID: `innnhytlkbmhnaqrijtd`, Регіон: `eu-west-1`). Локальні `.env` (backend) та `.env.local` (frontend) налаштовані на новий проект. Старий проект `yxodvhgyutatzqshiiua` в `igorgenov's Org` закріплений за дашбордом Відлік / TimesFM і не стосується HuyumiAI.
-- Supabase база даних з 25 таблицями (повна схема в `supabase-full-schema.sql`)
-- Google OAuth (@inweb.ua тільки)
-- Бекенд: Google Drive polling, AssemblyAI транскрипція, Claude аналіз зустрічей
-- Бекенд: Planfix Telegram chat sync + аналіз
-- Бекенд: Recovery (авто-перезапуск stuck розмов)
-- Бекенд: Audit (авто-фікс score integrity)
-- Всі 10 захардкоджені Cloud Run URL у роутах фронтенду замінено на `process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"`
-- TypeScript типи повністю синхронізовано (`UserRole`, `ConversationType`, `ConversationStatus`, NextAuth `Role`)
-- Виправлено App Router експорти в `insights/page.tsx` (винесено спільні компоненти в `insights/shared.tsx`)
-- Суворий білд (`next build`) увімкнено (`ignoreBuildErrors` та `ignoreDuringBuilds` прибрано), збірка проходить успішно з кодом 0
-- Мертвий SQLAlchemy код видалено
-- Мертві stub роутери (managers.py, conversations.py) видалено
-- SM-specific SQL міграції (contragents, deals, loss/win reasons) видалено
-- SM-специфічний код в planfix.py видалено (лишився тільки chat-pipeline)
-- Ringostat повністю видалено з усього коду
+```
+Vercel (Frontend: Next.js 14) ───► Supabase (PostgreSQL + Auth) ◄─── Render (Backend: FastAPI)
+          │                                                                │
+          ├── NextAuth (Google OAuth @inweb.ua)                            ├── Claude 3.5 Sonnet (AI scoring)
+          ├── 15 сторінок аналітики & дашбордів                            ├── AssemblyAI (транскрибація аудіо/відео)
+          └── ~35 Next.js API Routes                                       ├── Google Drive API (Meet polling)
+                                                                           └── Planfix REST API (Telegram чати)
+```
 
-### Що зламано / недопрацьовано
-
-1. **Supabase tables:**
-   - Таблицю `notifications` викликає meetings.py (рядки 504-510), але вона НЕ існує в схемі — буде помилка при кожному аналізі зустрічі (ковтається broad except)
-   - Таблицю `telegram_chats` є в міграціях, але немає в full schema
-
-2. **render.yaml неповний:**
-   - Немає: `ANTHROPIC_API_KEY_ANALYSIS`, `ANTHROPIC_API_KEY_CHATS`, `GOOGLE_DRIVE_WEB_CLIENT_ID`, `GOOGLE_DRIVE_WEB_CLIENT_SECRET`, `PLANFIX_API_TOKEN`
-
-3. **README/DEPLOY.md суперечливі:**
-   - README каже "Vercel + Railway"
-   - DEPLOY.md каже Railway
-   - `render.yaml` та `deploy-render.sh` для Render
-   - `deploy.sh` видалено (был Railway)
-   - Незрозуміло який canonical варіант
+- **Frontend (Vercel):** `https://frontend-5dx8augyq-igenov-4615s-projects.vercel.app` *(Next.js 14 App Router, Tailwind CSS, Lucide Icons)*
+- **Backend (Render):** `https://lumi-ai-backend-0cyt.onrender.com` *(Python 3.11, FastAPI, Uvicorn, Pydantic v2)*
+- **База даних (Supabase):** `https://innnhytlkbmhnaqrijtd.supabase.co`  
+  - Організація: `Gesha`  
+  - Проєкт: `gesha's Project`  
+  - Регіон: `eu-west-1` (Ireland)  
+  - База містить 25 таблиць (повна схема в `supabase-full-schema.sql`). Старий проєкт `yxodvhgyutatzqshiiua` в `igorgenov's Org` відключено і закріплено за іншим інструментом.
 
 ---
 
-## Що треба зробити (пріоритет)
+## 2. Доступи, які необхідно надати `s.doksov@inweb.ua`
 
-### 🔴 Критичні (без цього не працює)
+Для повноцінного ведення та підтримки проєкту новому розробнику потрібні такі доступи:
 
-1. **Додати redirect URI в Google Cloud Console** для кожного нового Vercel deploy URL (формат: `https://frontend-XXXXX-igenov-4615s-projects.vercel.app/api/auth/callback/google` та кастомного домену)
-
-2. **Вимкнути Vercel Deployment Protection** для production або налаштувати bypass token
-
-3. **Заповнити всі API ключі в Render backend:**
-   - `ANTHROPIC_API_KEY` (або три окремих: `_ANALYSIS`, `_CHATS`)
-   - `ASSEMBLYAI_API_KEY`
-   - `GOOGLE_DRIVE_CLIENT_ID` + `GOOGLE_DRIVE_CLIENT_SECRET` (Desktop OAuth)
-   - `GOOGLE_DRIVE_WEB_CLIENT_ID` + `GOOGLE_DRIVE_WEB_CLIENT_SECRET` (Web OAuth, для фронтенду)
-   - `GOOGLE_DRIVE_REFRESH_TOKEN`
-   - `PLANFIX_API_TOKEN`
-   - `MEETINGS_POLL_SECRET`
-
-### 🟡 Важливі (робоче, але з багами)
-
-4. ~~**Замінити захардкоджені URL:**~~ ✅ Виконано (замінено 10 входжень на `NEXT_PUBLIC_API_URL`)
-5. ~~**Оновити TypeScript типи:**~~ ✅ Виконано (`UserRole`, `ConversationType`, `ConversationStatus`, `Role`)
-6. ~~**Увімкнути TypeScript/ESLint в builds:**~~ ✅ Виконано (прибрано `ignoreBuildErrors`, виправлено App Router експорти через `insights/shared.tsx`, білд успішний)
-
-7. **Оновити `.env.example`** — додати всі змінні з config.py яких там немає
-
-### 🟢 Менші (якість)
-
-8. **Очистити render.yaml** — додати всі недостаючі env vars
-9. **Зробити canonical deploy шлях** — або Render, або Railway, не обидва
-10. **Оновити README.md** — актуальний stack та інструкції
-11. **Створити PM-промпт** через UI сторінку Prompts
-12. **Запустити повний AI pipeline** з реальними ключами
+| Платформа / Сервіс | Рівень доступу | Для чого потрібно |
+| :--- | :--- | :--- |
+| **GitHub** (`igorgenov/lumi-ai-source`) | **Admin / Collaborator** (push/pull права) | Робота з кодом, налаштування CI/CD, мердж PR |
+| **Supabase** (Орг `Gesha`, проєкт `innnhytlkbmhnaqrijtd`) | **Administrator / Developer** | Доступ до SQL Editor, перегляду таблиць, логів, керування RLS |
+| **Vercel** (Проєкт фронтенду) | **Member / Admin** команди Vercel | Керування Environment Variables, доменами, перегляд Build Logs |
+| **Render** (Сервіс `lumi-ai-backend-0cyt`) | **Collaborator / Member** | Перегляд логів бекенду, редеплой, налаштування Environment |
+| **Google Cloud Console** | **Editor / OAuth Configurator** | Керування OAuth 2.0 Client IDs, додавання нових Redirect URIs |
+| **Anthropic Console** | Член воркспейсу / API Key access | Керування ключами `sk-ant-...`, лімітами та витратами |
+| **AssemblyAI Console** | Доступ до аккаунту / API Key | Моніторинг балансу та ключ транскрибації |
+| **Planfix** | API доступ + налаштування шаблонів | Робота з інтеграцією переписок Telegram (Template ID: `2540515`) |
+| **Google Drive** | Доступ до папки записів Google Meet | Моніторинг вхідних записів дзвінків агентства |
 
 ---
 
-## API Keys (всі)
+## 3. Що вже зроблено та працює
 
-| Змінна | Де використовується | Статус |
-|--------|---------------------|--------|
-| `SUPABASE_URL` | Backend + Frontend | ⚠️ Потрібен |
-| `SUPABASE_SERVICE_KEY` | Backend | ⚠️ Потрібен |
-| `NEXT_PUBLIC_SUPABASE_URL` | Frontend | ⚠️ Потрібен |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Frontend | ⚠️ Потрібен |
-| `ANTHROPIC_API_KEY` | Backend (Claude fallback) | ⚠️ Потрібен |
-| `ANTHROPIC_API_KEY_ANALYSIS` | Backend (call/meeting scoring) | ⚠️ Потрібен |
-| `ANTHROPIC_API_KEY_CHATS` | Backend (chat scoring) | ⚠️ Потрібен |
-| `ASSEMBLYAI_API_KEY` | Backend (transcription) | ⚠️ Потрібен |
-| `GOOGLE_DRIVE_CLIENT_ID` | Backend (OAuth Desktop) | ⚠️ Потрібен |
-| `GOOGLE_DRIVE_CLIENT_SECRET` | Backend (OAuth Desktop) | ⚠️ Потрібен |
-| `GOOGLE_DRIVE_REFRESH_TOKEN` | Backend | ⚠️ Потрібен |
-| `GOOGLE_DRIVE_WEB_CLIENT_ID` | Backend (OAuth Web) | ⚠️ Потрібен |
-| `GOOGLE_DRIVE_WEB_CLIENT_SECRET` | Backend (OAuth Web) | ⚠️ Потрібен |
-| `GOOGLE_CLIENT_ID` | NextAuth (frontend) | ⚠️ Потрібен |
-| `GOOGLE_CLIENT_SECRET` | NextAuth (frontend) | ⚠️ Потрібен |
-| `NEXTAUTH_SECRET` | Frontend | ⚠️ Потрібен |
-| `NEXTAUTH_URL` | Frontend | ⚠️ Потрібен |
-| `NEXT_PUBLIC_API_URL` | Frontend | ⚠️ Потрібен |
-| `PLANFIX_API_TOKEN` | Backend | ⚠️ Потрібен |
-| `MEETINGS_POLL_SECRET` | Backend + Frontend | ⚠️ Потрібен |
-| `BACKEND_BASE_URL` | Backend | ⚠️ Потрібен |
-| `FRONTEND_BASE_URL` | Backend | ⚠️ Потрібен |
+1. **База даних Supabase:**
+   - Повністю відокремлена, налаштована в організації `Gesha`.
+   - Таблиця `managers` містить актуальних співробітників. `s.doksov@inweb.ua` призначений роллю `admin`.
+   - Перевірено працездатність та наявність таблиць: `conversations`, `notifications`, `chat_sync_settings`, `planfix_manager_map`, `prompts`, `prompt_versions`.
+2. **Фронтенд (Next.js 14):**
+   - Усі 10 захардкоджені Cloud Run URL замінено на `process.env.NEXT_PUBLIC_API_URL`.
+   - Синхронізовано типи TypeScript (`UserRole`, `ConversationType`, `ConversationStatus`, `Role`).
+   - Виправлено Next.js App Router конфлікт сторінкових експортів (спільний функціонал винесено в `frontend/app/(dashboard)/insights/shared.tsx`).
+   - Увімкнено суворий білд: прапорці `ignoreBuildErrors` та `ignoreDuringBuilds` видалено, збірка `npm run build` проходить з кодом 0.
+   - Бойові змінні оточення прописано у Vercel, виконано свіжий редеплой.
+3. **Google Cloud OAuth:**
+   - Додано дозволені Redirect URIs для фронтенду та для веб-авторизації Google Drive бекенду.
+4. **Очищення репозиторію:**
+   - Видалено застарілий код SQLAlchemy, мертві роутери, специфічний SM-код і модуль Ringostat.
 
 ---
 
-## Структура файлів
+## 4. План дій для `s.doksov@inweb.ua` (Що робити далі)
 
-### Backend (Python, FastAPI)
+### Крок 1. Заповнити Environment Variables у Render (Блокер запуску бекенду)
+У [Render Dashboard](https://dashboard.render.com) у сервісі `lumi-ai-backend-0cyt` в розділі **Environment** прописати:
 
+```env
+SUPABASE_URL=https://innnhytlkbmhnaqrijtd.supabase.co
+SUPABASE_SERVICE_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlubm5oeXRsa2JtaG5hcXJpanRkIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4ODUyNjEwNCwiZXhwIjoyMTA0MTAyMTA0fQ.PYoquN2rGZwaQmiObaxDmY-hNiR1ArkPhHjHT9Ki7bc
+BACKEND_BASE_URL=https://lumi-ai-backend-0cyt.onrender.com
+FRONTEND_BASE_URL=https://frontend-5dx8augyq-igenov-4615s-projects.vercel.app
+MEETINGS_POLL_SECRET=fca7085e28d4e50c883686cf1db6ae91ad5a8a2821445cc7
+
+# Ключі сторонніх API:
+ANTHROPIC_API_KEY=<бойовий_ключ_claude_sk-ant-...>
+ASSEMBLYAI_API_KEY=<ключ_assemblyai>
+PLANFIX_API_TOKEN=<токен_planfix>
+
+# Google Drive (Desktop OAuth - системний опрос):
+GOOGLE_DRIVE_CLIENT_ID=<desktop_oauth_client_id>
+GOOGLE_DRIVE_CLIENT_SECRET=<desktop_oauth_client_secret>
+GOOGLE_DRIVE_REFRESH_TOKEN=<refresh_token_диска>
+
+# Google Drive (Web OAuth - авторизація менеджерів):
+GOOGLE_DRIVE_WEB_CLIENT_ID=<web_oauth_client_id>
+GOOGLE_DRIVE_WEB_CLIENT_SECRET=<web_oauth_client_secret>
 ```
-backend/
-├── app/
-│   ├── __init__.py
-│   ├── main.py                          # Entry point, routers
-│   ├── core/
-│   │   ├── __init__.py
-│   │   └── config.py                    # All env vars, Pydantic Settings
-│   ├── routers/
-│   │   ├── __init__.py
-│   │   ├── meetings.py                  # Google Drive polling + analysis (535 lines)
-│   │   ├── chats.py                     # Planfix Telegram sync (286 lines)
-│   │   ├── recovery.py                  # Auto-retry stuck convos (58 lines)
-│   │   └── audit.py                     # Score integrity fix (74 lines)
-│   └── services/
-│       ├── __init__.py
-│       ├── supabase_client.py           # Supabase client wrapper
-│       ├── claude_analysis.py           # Claude AI for meetings/calls
-│       ├── chat_analysis.py             # Claude AI for Telegram chats
-│       ├── google_drive.py              # Drive file listing/download
-│       ├── google_drive_oauth.py        # Per-manager Drive OAuth
-│       ├── assemblyai_transcription.py  # AssemblyAI + diarization
-│       ├── planfix.py                   # Planfix REST API (chat-pipeline only)
-│       └── talk_ratio.py               # Manager talk-listen ratio
-├── tests/
-│   └── test_claude_analysis.py
-├── scripts/
-│   ├── test_meeting_transcription.py
-│   ├── drive_list_folder.py
-│   └── drive_authorize.py
-├── conftest.py
-├── requirements.txt
-├── Dockerfile
-└── .env.example
-```
+Після збереження натиснути **Manual Deploy** → **Deploy latest commit**.
 
-### Frontend (TypeScript, Next.js 14)
+---
 
-```
-frontend/
-├── app/
-│   ├── layout.tsx                       # Root layout
-│   ├── page.tsx                         # Root redirect
-│   ├── providers.tsx                    # Client providers
-│   ├── favicon.ico
-│   ├── icon.png
-│   ├── (auth)/
-│   │   ├── layout.tsx
-│   │   └── login/page.tsx              # Google OAuth login
-│   ├── (dashboard)/
-│   │   ├── layout.tsx                   # Dashboard layout (sidebar)
-│   │   ├── dashboard/page.tsx           # Main dashboard
-│   │   ├── conversations/
-│   │   │   ├── page.tsx                 # Conversation list
-│   │   │   └── [id]/page.tsx           # Conversation detail
-│   │   ├── team/
-│   │   │   ├── page.tsx                 # Team list
-│   │   │   └── [id]/page.tsx           # Member profile
-│   │   ├── coaching/
-│   │   │   ├── page.tsx
-│   │   │   └── [tab]/page.tsx
-│   │   ├── insights/
-│   │   │   ├── page.tsx
-│   │   │   └── [id]/page.tsx
-│   │   ├── prompts/page.tsx
-│   │   ├── connect-drive/page.tsx
-│   │   ├── pm/page.tsx                  # PM pivot
-│   │   └── settings/
-│   │       ├── page.tsx
-│   │       ├── [tab]/page.tsx
-│   │       ├── layout.tsx
-│   │       └── _components.tsx          # Integrations, Changelog, etc
-│   └── api/
-│       ├── auth/[...nextauth]/route.ts
-│       ├── conversations/
-│       │   ├── [id]/route.ts
-│       │   ├── [id]/reanalyze/route.ts
-│       │   ├── [id]/service/route.ts
-│       │   ├── [id]/kind/route.ts
-│       │   ├── fetch-vtt/route.ts
-│       │   ├── manual/route.ts
-│       │   ├── manual-drive/route.ts
-│       │   └── manual-chat/route.ts
-│       ├── dashboard/route.ts
-│       ├── dashboard/zone-deal-correlation/route.ts
-│       ├── team/route.ts
-│       ├── team/me/route.ts
-│       ├── insights/route.ts
-│       ├── insights/[id]/route.ts
-│       ├── insights/estimate/route.ts
-│       ├── prompts/route.ts
-│       ├── prompts/[id]/route.ts
-│       ├── prompts/[id]/versions/route.ts
-│       ├── coaching/sessions/route.ts
-│       ├── coaching/plans/route.ts
-│       ├── coaching/assignments/route.ts
-│       ├── coaching/suggest-goal/route.ts
-│       ├── costs/route.ts
-│       ├── reports/send/route.ts
-│       ├── reports/configs/route.ts
-│       ├── reports/settings/route.ts
-│       ├── notifications/route.ts
-│       ├── meetings/
-│       │   ├── drive-connect/route.ts
-│       │   ├── drive-connect-self/route.ts
-│       │   ├── drive-disconnect/route.ts
-│       │   ├── drive-disconnect-self/route.ts
-│       │   ├── drive-status/route.ts
-│       │   └── drive-status-self/route.ts
-│       ├── google-drive/account/route.ts
-│       ├── integrations/chat-sync/route.ts
-│       ├── audit-log/route.ts
-│       ├── audit-log/prompt-diff/route.ts
-│       └── telegram/test/route.ts
-├── components/
-│   ├── theme-provider.tsx
-│   ├── layout/
-│   │   ├── sidebar.tsx
-│   │   ├── header.tsx
-│   │   └── changelog-footer-link.tsx
-│   ├── icons/brand-icons.tsx
-│   ├── dashboard/stat-card.tsx
-│   ├── providers/view-as-provider.tsx
-│   └── ui/
-│       ├── manager-avatar.tsx
-│       ├── rank-badge.tsx
-│       ├── info-hint.tsx
-│       ├── date-picker.tsx
-│       ├── confirm-dialog.tsx
-│       └── date-range-picker.tsx
-├── hooks/
-│   ├── useConversations.ts
-│   ├── useManagers.ts
-│   └── useDashboardStats.ts
-├── lib/
-│   ├── auth.ts                          # NextAuth config
-│   ├── api-auth.ts                      # API role gating
-│   ├── supabase.ts                      # Supabase client
-│   ├── claude-analysis.ts               # Frontend Claude lib
-│   ├── anthropic-keys.ts                # Anthropic key mgmt
-│   ├── activity-log.ts
-│   ├── utils.ts
-│   └── ...
-├── types/
-│   ├── index.ts                         # Shared types
-│   └── next-auth.d.ts
-├── middleware.ts
-├── next.config.js
-├── tailwind.config.ts
-├── postcss.config.js
-├── package.json
-├── Dockerfile
-├── .env.example
-└── .env.local
+### Крок 2. Наскрізне тестування (End-to-End verification)
+1. **Google Meet Pipeline:**
+   - Завантажити тестовий файл `.mp4` у папку записів Google Meet або скористатись ручним завантаженням на сторінці `/conversations`.
+   - Перевірити логи бекенду: `download` → `AssemblyAI transcribe` → `Claude score` → збереження у `conversations` та `ai_analysis`.
+   - Перевірити відображення результату та балів на Дашборді.
+2. **Planfix Telegram Pipeline:**
+   - У розділі `/settings` вкладка **Інтеграції** перевірити стан синхронізації чатів Planfix (`POST /api/integrations/chat-sync`).
+   - Перевірити співставлення менеджерів через `planfix_manager_map`.
+3. **Модуль AI Інсайтів:**
+   - Перейти на `/insights`, ввести довільний запит (наприклад, *"Які топ-3 заперечення по вартості послуг?"*) та перевірити генерацію звіту з експортом у PDF.
+
+---
+
+### Крок 3. Налаштування промптів оцінки під послуги
+- У розділі `/prompts` перевірити та за потреби відредагувати спеціалізовані критерії оцінки для послуг Inweb:
+  - `SEO`, `PPC`, `GEO`, `Analytics`, `ASO`, `ASA`.
+- Зверніть увагу: редагування промпту автоматично створює новий запис у `prompt_versions` та фіксується в `audit_log`.
+
+---
+
+## 5. Довідник для локальної розробки
+
+### Клонування:
+```bash
+git clone https://github.com/igorgenov/lumi-ai-source.git
+cd lumi-ai-source
 ```
 
-### Root
-
+### Бекенд:
+```bash
+cd backend
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+uvicorn app.main:app --reload --port 8000
 ```
-/
-├── supabase-full-schema.sql            # Full DB schema (25 tables)
-├── supabase-*.sql                      # ~39 migration files
-├── Dockerfile                          # Backend Docker (used by Render)
-├── docker-compose.yml                  # Local dev
-├── render.yaml                         # Render deployment
-├── deploy-render.sh                    # Render deploy
-├── setup-local.sh                      # Local dev setup
-├── DEPLOY.md
-├── README.md
-├── HANDOFF.md                          # Цей документ
-├── backend/                            # See above
-└── frontend/                           # See above
-```
+Файл локальних змінних: `backend/.env`.
 
-### Public assets (frontend/public/)
-
+### Фронтенд:
+```bash
+cd frontend
+npm install
+npm run dev
 ```
-frontend/public/
-├── icon.png                            # Favicon (speech bubble)
-├── favicon.ico
-├── favicon-16x16.png
-├── favicon-32x32.png
-├── apple-icon.png
-├── favicon-dark.png
-├── favicon-light.png
-├── huyumi-icon.png                     # Login page (rocket)
-├── huyumi-logo.png                     # Sidebar light (rocket)
-├── huyumi-logo-dark.png                # Sidebar dark (rocket)
-├── icons/                              # UI icons
-└── robots.txt
+Файл локальних змінних: `frontend/.env.local`.  
+Перевірка строгої збірки перед пушем:
+```bash
+npm run build
 ```
 
 ---
 
-## Деплой
+## 6. База даних: Користувачі та ролі
 
-### Бекенд (Render)
-1. GitHub repo: `igorgenov/lumi-ai-source`
-2. Render автоматично деплоїть з `Dockerfile` в корені
-3. Потрібні env vars: див. таблицю вище
+Авторизація налаштована через корпоративні пошти `@inweb.ua`.  
+Поточні користувачі в таблиці `managers`:
+- `s.doksov@inweb.ua` — **admin**
+- `i.genov@inweb.ua` — **admin**
+- `v.naumov@inweb.ua` — **admin**
+- `v.nazarenko@inweb.ua` — **admin**
+- `s.mykhailiuk@inweb.ua` — **admin**
+- `a.mamontov@inweb.ua` — **admin**
+- `v.badiuk@inweb.ua` — **viewer**
+- `o.voitenko@inweb.ua` — **viewer**
 
-### Фронтенд (Vercel)
-1. GitHub repo: `igorgenov/lumi-ai-source`, root directory = `frontend`
-2. Кожен git push на main → автоматичний деплой
-3. Після кожного нового deploy URL потрібно додавати redirect URI в Google Cloud Console
-
-### Google Cloud Console
-1. Go to: `https://console.cloud.google.com/apis/credentials`
-2. OAuth 2.0 Client ID → Authorized redirect URIs
-3. Додати: `https://frontend-XXXXX-igenov-4615s-projects.vercel.app/api/auth/callback/google`
-
----
-
-## PM Pivot (поточний стан)
-
-Продукт був переключений з Sales Manager на Project Manager аналітику:
-
-- **Role**: `"pm"` (замість `"manager"`)
-- **AI Criteria**: project_clarity, timeline_management, stakeholder_alignment, risk_communication, budget_control, team_coordination, client_satisfaction
-- **KPIs**: CSAT, дедлайни, комунікація, бюджет, залученість команди
-- **Conversation types**: Статус-зустріч, Планування спринту, Ретроспектива, Демо/Презентація, Технічне обговорення, Інше
-- **Coaching programs**: Управління ризиками, Комунікація зі стейкхолдерами, Управління строками, Контроль бюджету, Лідерство в команді, Задоволеність клієнта
-- **DB columns**: `manager_id`, `manager_roles` залишились (не перейменовані)
-- **PM page**: `/pm`
-- **Backend `claude_analysis.py`**: повністю переписаний під PM criteria
-
----
-
-## Видалено (SM remnants cleanup, 2026-08-31)
-
-Під час cleanup було видалено:
-
-- **Backend**: `app/db/` (base.py, session.py), `app/models/` (user.py, conversation.py), `app/routers/managers.py`, `app/routers/conversations.py`
-- **Frontend**: `components/ui/deal-loss-reason-modal.tsx`
-- **SQL migrations**: 10 SM-specific файлів (contragents, deals, loss/win reasons)
-- **Logos**: `lumi-icon.png`, `lumi-logo.png`, `lumi-logo-dark.png`, `inweb-logo-black.png`, `logo_lumi.ai_black.png`, `logo_lumi.ai_white.png`, `logo_lumi.ai.png`, `logo_lumi.ai.jpg`, `logo2_lumi.ai.jpg`, `logo3_lumi.ai.png`, `logo4_lumi.ai.png`
-- **Scripts**: `deploy.sh`, `test-deployment.sh`
-- **Debug artifacts**: `.playwright-mcp/`, `combined.log`, `error.log`
-- **planfix.py**: видалено deal-related functions (SERVICE_NAMES, DEAL_* constants, get_task, get_deal_*, guess_service, get_contact_deal_task_ids_and_group)
-- **config.py**: видалено `ANTHROPIC_API_KEY_DEAL_REASONS`
-- **Ringostat**: повністю видалено з backend + frontend
+Будь-який інший співробітник з доменом `@inweb.ua` при першому вході отримує базову роль `viewer`. Призначити роль адміністратора можна прямо в базі або через API.
